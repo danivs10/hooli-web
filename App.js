@@ -18,7 +18,7 @@ app.post('/generateDemo', async (req, res) => {
     const inputText = req.body.text;
 
     // Make a request to the external server
-    const response = await axios.post('http://<an ip>:<a port>/generateDemo', {
+    const response = await axios.post('http://35.224.98.88:3000/generateDemo', {
       text: inputText,
     });
 
