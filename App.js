@@ -8,8 +8,7 @@ const port = 3000; // Change this to your desired port
 app.use(express.json());
 app.use(cors({
   origin: 'https://team-hashing.github.io',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  methods: ['GET', 'POST']
 }));
 
 // Define the route for /generateDemo
