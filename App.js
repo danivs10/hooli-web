@@ -26,7 +26,7 @@ app.post('/generateDemo', async (req, res) => {
   } catch (error) {
     // Handle errors
     console.error('Error:', error.message);
-    res.status(500).json({ error: 'An error occurred' });
+    res.status(500).json({ error: error.message });
   }
 });
 
