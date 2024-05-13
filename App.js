@@ -1,70 +1,31 @@
-import React, { createContext, useState, useEffect } 	from 'react';
-import { NavigationContainer } 							from '@react-navigation/native';
-import { auth } 										from './firebaseConfig';
-import { onAuthStateChanged } 							from 'firebase/auth';
+const express = require('express');
+const axios = require('axios');
 
-import BottomTabNavigator 		from './components/BottomTabNavigator';
-import AuthStack 				from './components/AuthStack';
+const app = express();
+const port = 3000; // Change this to your desired port
 
-import * as eva from '@eva-design/eva';
-import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
+app.use(express.json());
 
-import {  default as theme  } from './theme.json';
+// Define the route for /generateDemo
+app.post('/generateDemo', async (req, res) => {
+  try {
+    const inputText = req.body.text;
 
-import LoadingScreen from './components/LoadingScreen';
+    // Make a request to the external server
+    const response = await axios.post('http://35.224.98.88:3000/generateDemo', {
+      text: inputText,
+    });
 
-// Creating a context for authentication
-export const AuthContext = createContext({ user: null, isLoggedIn: false });
+    // Return whatever the external server responds
+    res.json(response.data);
+  } catch (error) {
+    // Handle errors
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
-const App = () => {
-	// State variables for user and login status
-	const [user, setUser] = useState(null);
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [isLoading, setIsLoading] = useState(true);
-
-
-	// Effect hook to handle authentication state changes
-	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
-
-			if (user) {
-				setIsLoggedIn(true);
-				setUser(user);
-
-			} else {
-				setIsLoggedIn(false);
-				setUser(null);
-			}
-
-			setTimeout(() => {
-				setIsLoading(false);
-			}, 200);
-		});
-
-		// Cleanup subscription on unmount
-		return () => unsubscribe();
-
-	}, []);
-
-
-
-  return (
-	<>
-		<IconRegistry icons={EvaIconsPack} />
-		<ApplicationProvider {...eva} theme={{ ...eva.light, ...theme }}>
-		<AuthContext.Provider value={{ user, isLoggedIn }}>
-			<NavigationContainer>
-			{ isLoading ? 
-			<LoadingScreen /> :
-			isLoggedIn ? 
-				<BottomTabNavigator /> :
-				 <AuthStack />}
-			</NavigationContainer>
-		</AuthContext.Provider>
-		</ApplicationProvider>
-	</>
-  );
-};
-
-export default App;
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is listening on port ${port}`);
+});
